@@ -2,6 +2,9 @@
   "name": "BOLO INDIA",
   "description": "An AI-powered interactive platform to explore the heart of India through real-time voice conversations, cultural insights, and visual storytelling.",
   "requestFramePermissions": [
-    "microphone"
-  ]
+    "microphone",
+    "camera"
+  ],
+  "short_name": "BoloIndia",
+  "theme_color": "#FF9933"
 }

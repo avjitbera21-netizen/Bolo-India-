@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppView, User } from '../types';
 
 interface LayoutProps {
@@ -11,14 +11,33 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children, activeView, setView, user }) => {
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    });
+  }, []);
+
+  const handleInstall = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    } else {
+      alert("यह ऐप आपके ब्राउज़र में पहले से इंस्टॉल है या आपका डिवाइस इसे सपोर्ट नहीं करता। (Chrome/Edge इस्तेमाल करें)");
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      {/* Header */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-lg border-b-4 border-orange-500 shadow-xl">
         <div className="max-w-6xl mx-auto px-4 h-20 flex items-center justify-between">
           <div className="flex items-center space-x-4 cursor-pointer" onClick={() => setView('feed')}>
             <div className="relative group">
-              {/* Stylized Icon inspired by the user image */}
               <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center shadow-2xl overflow-hidden border-2 border-orange-400 logo-glow transition-transform group-hover:scale-110">
                 <div className="absolute inset-0 opacity-20 bg-gradient-to-tr from-orange-600 via-white to-emerald-600"></div>
                 <svg className="w-8 h-8 text-white relative z-10" fill="currentColor" viewBox="0 0 24 24">
@@ -30,12 +49,8 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView, user }) 
             </div>
             
             <div className="flex flex-col">
-              <h1 className="text-3xl logo-text leading-none mb-0.5">
-                BOLO INDIA
-              </h1>
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.3em] leading-none">
-                Voice of New India
-              </span>
+              <h1 className="text-3xl logo-text leading-none mb-0.5">BOLO INDIA</h1>
+              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.3em] leading-none">Voice of New India</span>
             </div>
           </div>
           
@@ -60,7 +75,18 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView, user }) 
             ))}
           </nav>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
+             {/* New Install Button */}
+             <button 
+               onClick={handleInstall}
+               className="bg-emerald-600 text-white p-2 md:px-4 md:py-2 rounded-2xl flex items-center space-x-2 hover:bg-emerald-700 transition-all shadow-lg active:scale-95"
+             >
+               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+               </svg>
+               <span className="hidden md:inline text-xs font-black">ऐप इंस्टॉल करें</span>
+             </button>
+
              {user && (
                <div className="hidden md:flex items-center space-x-3 px-4 py-2 bg-white rounded-2xl border border-slate-200 shadow-sm">
                  <div className="text-right">
@@ -76,12 +102,10 @@ const Layout: React.FC<LayoutProps> = ({ children, activeView, setView, user }) 
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-8">
         {children}
       </main>
 
-      {/* Bottom Nav Mobile */}
       <nav className="md:hidden sticky bottom-0 z-50 bg-white/90 backdrop-blur-md border-t border-slate-200 flex justify-around py-3 px-2">
         <button onClick={() => setView('feed')} className={`flex flex-col items-center transition-all ${activeView === 'feed' ? 'text-orange-600 scale-110' : 'text-slate-400'}`}>
            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" /></svg>

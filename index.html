@@ -3,13 +3,19 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#FF9933">
+    <link rel="manifest" href="manifest.json">
     <title>बोलो इंडिया - भारत के दिल से बात करें</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&family=Bungee&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: contain;
         }
         .font-brand {
             font-family: 'Playfair Display', serif;
@@ -21,10 +27,6 @@
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(2px 2px 0px #000);
             text-transform: uppercase;
-        }
-        .logo-container {
-            position: relative;
-            perspective: 1000px;
         }
         .logo-glow {
             filter: drop-shadow(0 0 8px rgba(255, 153, 51, 0.6));
@@ -43,6 +45,9 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @media (max-width: 640px) {
+            .logo-text { font-size: 1.5rem; }
+        }
     </style>
 <script type="importmap">
 {
@@ -56,7 +61,14 @@
 }
 </script>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-50 text-slate-900 select-none">
     <div id="root"></div>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW registration failed:', err));
+        });
+      }
+    </script>
 </body>
 </html>

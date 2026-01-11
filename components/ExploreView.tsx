@@ -38,6 +38,16 @@ const ExploreView: React.FC = () => {
     }
   };
 
+  const handleDownload = () => {
+    if (!generatedImg) return;
+    const link = document.createElement('a');
+    link.href = generatedImg;
+    link.download = `BoloIndia_${prompt || 'Bharat'}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-8">
       <div className="text-center space-y-2">
@@ -68,7 +78,10 @@ const ExploreView: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">लोकप्रिय सुझाव</h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">लोकप्रिय सुझाव</h3>
+              <span className="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full font-black uppercase">मुफ्त वॉलपेपर</span>
+            </div>
             <div className="flex flex-wrap gap-2">
               {states.map(state => (
                 <button
@@ -83,14 +96,26 @@ const ExploreView: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-slate-200 rounded-[2rem] aspect-video flex items-center justify-center overflow-hidden shadow-inner relative border-4 border-white">
+        <div className="bg-slate-200 rounded-[2rem] aspect-video flex items-center justify-center overflow-hidden shadow-inner relative border-4 border-white group">
           {isGenerating ? (
             <div className="flex flex-col items-center space-y-4">
               <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
               <p className="text-slate-500 font-bold animate-pulse">भारत की आत्मा को कैद कर रहा हूँ...</p>
             </div>
           ) : generatedImg ? (
-            <img src={generatedImg} alt="Generated India Visual" className="w-full h-full object-cover animate-fade-in" />
+            <div className="relative w-full h-full">
+              <img src={generatedImg} alt="Generated India Visual" className="w-full h-full object-cover animate-fade-in" />
+              {/* Free Download Button */}
+              <button 
+                onClick={handleDownload}
+                className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-md text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center space-x-2 border border-white/20 hover:bg-black/70 transition-all"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span>मुफ्त डाउनलोड</span>
+              </button>
+            </div>
           ) : (
             <div className="text-center p-8">
               <svg className="w-16 h-16 text-slate-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
